@@ -1,0 +1,37 @@
+# Notices
+
+## Intel Graphics Control Library (IGCL)
+
+`src-tauri/src/backend/intel.rs` contains C struct definitions and constant
+names transcribed from the public Intel SDK header `igcl_api.h` of the
+Intel Graphics Control Library:
+
+- Source: https://github.com/intel/drivers.gpu.control-library
+- Header: `include/igcl_api.h`
+- Copyright (C) 2025 Intel Corporation
+- License: Intel Software License Agreement 10.07.21
+  (license text: https://github.com/intel/drivers.gpu.control-library/blob/master/LICENSE)
+
+The header is redistributed by Intel with notice, "solely for use on Intel
+platforms". Only the minimal subset of types actually used by ChromaDeck is
+reproduced, with names preserved verbatim (including upstream spellings such
+as `CTL_PIXTX_CONFIG_OPERAION_TYPE_*` and the transcribed struct
+`ctl_adapter_display_encoder_properties_t`), together with the matching
+function-pointer typedefs. No function implementation is transcribed; driver
+entry points are resolved dynamically by name at runtime.
+
+ChromaDeck does not redistribute any Intel binaries. The Intel driver
+libraries (`ControlLib.dll`, `IntelControlLib.dll`) are loaded at runtime
+from the local Windows DriverStore, and only their exported symbols and the
+public header are used. No Intel binary is reverse-engineered.
+
+## nvBrightness
+
+[nvBrightness](https://github.com/pbatard/nvBrightness) by Pete Batard was
+used as a behavioral reference for NVIDIA's brightness transfer math. No code
+is reused; the math is reimplemented from observed driver behavior.
+
+## NvAPIWrapper
+
+[NvAPIWrapper](https://github.com/falahati/NvAPIWrapper) was used as a
+reference for NVAPI interface IDs. No code is reused.

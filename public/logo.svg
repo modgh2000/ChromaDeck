@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <title>ChromaDeck</title>
+  <g stroke="#F4F1EA" stroke-width="3" stroke-linejoin="round" fill="#0D0E11">
+    <rect x="68" y="4" width="28" height="28" rx="6" fill="#5EEAD4"/>
+    <rect x="36" y="4" width="28" height="28" rx="6"/>
+    <rect x="4" y="4" width="28" height="28" rx="6"/>
+    <rect x="4" y="36" width="28" height="28" rx="6"/>
+    <rect x="4" y="68" width="28" height="28" rx="6"/>
+    <rect x="36" y="68" width="28" height="28" rx="6"/>
+    <rect x="68" y="68" width="28" height="28" rx="6"/>
+  </g>
+</svg>

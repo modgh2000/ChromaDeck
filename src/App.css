@@ -1,0 +1,685 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ==========================================================================
+   ChromaDeck — Flat Dark Minimal
+   Flat dark canvas, 1px hairlines, single mint accent fill, Geist + JetBrains
+   Mono. No glass, no glows, no shadows, no pills (badges excepted).
+   ========================================================================== */
+
+@theme {
+  /* ——— Colour tokens (the only palette) ——— */
+  /* Elevation ladder: page -> card -> raised (dialogs, popovers, ghost) -> hover */
+  --color-background: #060608;
+  --color-surface: #0d0e11;
+  --color-surface-raised: #15161a;
+  --color-surface-hover: #1b1d22;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-hover: rgba(255, 255, 255, 0.12);
+  --color-foreground: #f4f1ea;
+  --color-foreground-muted: #a1a7af;
+  --color-muted-foreground: #a1a7af;
+  --color-subtle-fg: #858b94; /* ≥4.9:1 on every surface (was 3.5-4.3) */
+  --color-primary: #5eead4;
+  --color-primary-foreground: #060608;
+  --color-primary-subtle: rgba(94, 234, 212, 0.12);
+  --color-primary-border: rgba(94, 234, 212, 0.3);
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #ffffff;
+  --color-warning: #fbbf24;
+  --color-ring: #5eead4;
+
+  /* ——— Radius: one value for cards, buttons, inputs, dialogs, slots ——— */
+  --radius-card: 8px;
+
+  /* ——— Typography ——— */
+  --font-display: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-body: "Geist", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ==========================================================================
+   Typography
+   ========================================================================== */
+
+body,
+html {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display voice: headings, dialog titles, buttons */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+[data-slot="dialog-title"],
+[data-slot="button"] {
+  font-family: var(--font-display);
+}
+
+/* Mono for IDs, status, meta, parameter values */
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Product lockup */
+.logo-lockup {
+  height: 24px;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   Carousel — hide scrollbar, keep scrollable
+   ========================================================================== */
+
+.carousel-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.carousel-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ==========================================================================
+   Scrollbar styling (WebKit)
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
+}
+
+/* ==========================================================================
+   Placeholder + selection
+   ========================================================================== */
+
+::placeholder {
+  color: var(--color-muted-foreground);
+}
+
+::selection,
+::-moz-selection {
+  background-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  color: var(--color-foreground);
+}
+
+/* ==========================================================================
+   Motion system — tokens, keyframes, utility classes
+   Transform + opacity only; no layout-property animation.
+   ========================================================================== */
+
+:root {
+  --motion-micro: 80ms;
+  --motion-fast: 150ms;
+  --motion-standard: 250ms;
+  --motion-slow: 400ms;
+  --motion-slower: 600ms;
+  --motion-shell: 350ms;
+  --ease-fluid: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}
+
+@keyframes motion-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes motion-slide-up {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes motion-slide-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes motion-slide-left {
+  from { opacity: 0; transform: translateX(6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes motion-slide-right {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes motion-shell-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes motion-shell-down {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(16px); }
+}
+
+@keyframes motion-scale-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* — Masked reveal: text/content slides up clipped by overflow:hidden — */
+
+@keyframes motion-mask-reveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* — Value swap: brief crossfade for changing numbers/counts ———————— */
+
+@keyframes motion-value-swap {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* — Card delete explosion —————————————————————————————————————————— */
+
+@keyframes motion-explode {
+  0%   { opacity: 1; transform: scale(1) rotate(0deg); }
+  35%  { opacity: 1; transform: scale(1.12) rotate(1.5deg); }
+  100% { opacity: 0; transform: scale(0.6) rotate(-3deg); }
+}
+
+/* — Marquee ———————————————————————————————————————————————————————— */
+
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* — Card edge vanish (scroll-driven) —————————————————————————————— */
+
+@keyframes card-edge-vanish {
+  0%   { opacity: 0; transform: translateY(8px) scale(0.97); }
+  25%  { opacity: 1; transform: none; }
+  65%  { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-8px) scale(0.97); }
+}
+
+/* — Entrance utilities —————————————————————————————————————————— */
+
+.enter-fade {
+  animation: motion-fade-in var(--motion-standard) var(--ease-out) both;
+}
+
+.enter-slide-up {
+  animation: motion-slide-up var(--motion-slow) var(--ease-out) both;
+}
+
+.enter-slide-down {
+  animation: motion-slide-down var(--motion-fast) var(--ease-out) both;
+}
+
+.enter-slide-left {
+  animation: motion-slide-left var(--motion-fast) var(--ease-out) both;
+}
+
+.enter-slide-right {
+  animation: motion-slide-right var(--motion-fast) var(--ease-out) both;
+}
+
+.enter-stagger {
+  animation-name: motion-slide-up;
+  animation-duration: var(--motion-standard);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+  animation-delay: calc(var(--stagger-ms, 0ms));
+}
+
+/* — Masked reveal — */
+
+.enter-reveal {
+  overflow: hidden;
+}
+
+.enter-reveal > .enter-reveal-child {
+  display: block;
+  animation: motion-mask-reveal var(--motion-standard) var(--ease-out) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* — Value swap — */
+
+.value-swap {
+  animation: motion-value-swap 200ms var(--ease-out);
+}
+
+/* — Exit utilities —————————————————————————————————————————— */
+
+.exit-fade {
+  animation: motion-fade-in reverse var(--motion-micro) var(--ease-out) forwards;
+}
+
+.exit-slide-up {
+  animation: motion-slide-up reverse var(--motion-fast) var(--ease-out) forwards;
+}
+
+/* — App-shell staged entrance (mount + every window re-show) —
+   Hierarchy: header -> sidebar -> library -> footer, staged by delay. */
+
+.shell-enter {
+  animation: motion-shell-up var(--motion-shell) var(--ease-out) both;
+  animation-delay: var(--shell-delay, 0ms);
+}
+
+.enter-shell-up {
+  animation: motion-shell-up var(--motion-shell) var(--ease-fluid) both;
+}
+
+.exit-shell-down {
+  animation: motion-shell-down var(--motion-fast) var(--ease-exit) both;
+}
+
+/* — Feedback utilities —————————————————————————————————————————— */
+
+.feedback-enter {
+  animation: motion-slide-down var(--motion-fast) var(--ease-out) both;
+}
+
+.feedback-exit {
+  animation: motion-fade-in reverse var(--motion-micro) var(--ease-out) forwards;
+}
+
+/* — Signature press: translate 1px on active, ~80ms ————————— */
+
+[data-slot="button"]:not(:disabled):active {
+  translate: 1px 1px;
+  transition-duration: var(--motion-micro);
+}
+
+/* — Button-in-Button: trailing icon circle physics ————————— */
+
+[data-slot="button"]:not(:disabled):not(:active):hover [data-trailing-icon] {
+  translate: 3px 0;
+  scale: 1.06;
+  transition:
+    translate var(--motion-fast) var(--ease-fluid),
+    scale var(--motion-fast) var(--ease-fluid);
+}
+
+/* — Dialog timing override (bump from base-ui 100ms default) —— */
+
+[data-slot="dialog-overlay"] {
+  animation-duration: var(--motion-fast);
+  transition-duration: var(--motion-fast);
+}
+
+/* — Select dropdown timing —————————————————————————————————— */
+
+[data-slot="select-content"] {
+  animation-duration: var(--motion-fast);
+  transition-duration: var(--motion-fast);
+}
+
+/* — View transition timing ——————————————————————————————————
+   Filter changes and batch deletes run inside document.startViewTransition.
+   Named cards keep their own timings; this only trims the root crossfade to
+   the fast beat so filtering feels like a state swap, not a page change. */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--motion-fast);
+}
+
+/* — Dialog title entrance —————————————————————————————————— */
+
+[data-slot="dialog-content"] [data-slot="dialog-title"] {
+  animation: motion-fade-in 200ms var(--ease-out) both;
+}
+
+/* — Monitor dashboard card entrance ———————————————————————— */
+
+.monitor-card-enter {
+  animation-name: motion-slide-up;
+  animation-duration: var(--motion-fast);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+  animation-delay: calc(var(--stagger-ms, 0ms));
+}
+
+/* — Error banner slide-down —————————————————————————————— */
+
+.error-banner-enter {
+  animation: motion-slide-down var(--motion-standard) var(--ease-out) both;
+}
+
+/* — Transient messages fade-slide in/out —————————————————— */
+
+.transient-enter {
+  animation: motion-slide-up var(--motion-fast) var(--ease-out) both;
+}
+
+/* — Footer status crossfade on change —————————————————————— */
+
+.footer-crossfade {
+  transition: opacity var(--motion-micro) var(--ease-out);
+}
+
+/* — Footer health light: one expanding ring per state change ——
+   The dot itself stays static; the ::after ring inherits the dot's
+   background colour (which carries the state tone). */
+
+@keyframes health-pulse-ring {
+  from { scale: 1; opacity: 1; }
+  to   { scale: 1.6; opacity: 0; }
+}
+
+.health-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: inherit;
+  pointer-events: none;
+  animation: health-pulse-ring var(--motion-slower) var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .health-pulse::after {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* — Empty state entrance —————————————————————————————————— */
+
+.empty-state-enter {
+  animation: motion-fade-in var(--motion-fast) var(--ease-out) both;
+}
+
+/* — PresetEditor validation slide-in —————————————————————— */
+
+.validation-slide {
+  animation: motion-slide-down var(--motion-micro) var(--ease-out) both;
+}
+
+/* — Slider thumb grab scale ——————————————————————————————— */
+
+[data-slot="slider-thumb"] {
+  transition: transform var(--motion-micro) var(--ease-spring);
+}
+
+[data-slot="slider-thumb"]:active {
+  transform: scale(1.1);
+}
+
+/* — Save-state crossfade —————————————————————————————————— */
+
+.save-crossfade {
+  transition: opacity var(--motion-micro) var(--ease-out);
+}
+
+/* — ICC status snap —————————————————————————————————— */
+
+.icc-pop {
+  animation: motion-scale-in 180ms var(--ease-out) both;
+}
+
+/* — Input focus transition —————————————————————————————— */
+
+[data-slot="input"] {
+  transition: border-color var(--motion-micro) var(--ease-out);
+}
+
+/* — Library scroll edge vanish ——————————————————————————————
+   Scroll-linked per-card dissolve: each preset pad fades, settles, and
+   shrinks slightly as it travels out of the scrollport in either
+   direction, fully driven by its position (animation-timeline: view).
+   Scrubbable, GPU-composited, zero JavaScript. */
+
+.preset-deck [data-slot="card"]:not(.pop-in):not(.card-explode):not(.drag-placeholder) {
+  animation: card-edge-vanish linear both;
+  animation-timeline: view();
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preset-deck [data-slot="card"] {
+    animation: none !important;
+  }
+}
+
+/* — Library scroll edge vanish — IO fallback —————————————— */
+
+.no-view-timeline .preset-deck [data-slot="card"]:not(.pop-in):not(.card-explode):not(.drag-placeholder) {
+  animation: none !important;
+  opacity: var(--edge-o, 1);
+}
+
+/* — Preset title marquee —————————————————————————————— */
+
+.preset-title .marquee-track {
+  display: inline-flex;
+  width: max-content;
+}
+
+.preset-title:hover .marquee-track,
+.preset-title:focus-visible .marquee-track {
+  animation: marquee-x 8s linear infinite;
+}
+
+/* — Reduced motion — zero out all animation/transition durations — */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}
+
+/* — Double-Bezel card hover: border brightens —————————————— */
+
+[data-slot="card"]:hover,
+[data-slot="card-outer"]:hover {
+  border-color: var(--color-border-hover);
+}
+
+/* — Icon strip buttons: subtle icon rotation on hover ————————— */
+
+[data-slot="card"] button:hover svg {
+  scale: 1.1;
+  rotate: 2deg;
+  transition: scale var(--motion-fast) var(--ease-out), rotate var(--motion-fast) var(--ease-out);
+}
+
+/* — Carousel arrows: icon scale on hover —————————————— */
+
+[data-carousel-arrow]:hover svg {
+  scale: 1.1;
+  transition: scale var(--motion-fast) var(--ease-out);
+}
+
+/* — PresetCard ring crossfade —————————————————————————— */
+
+.card-ring {
+  transition: translate var(--motion-micro) var(--ease-out),
+              border-color var(--motion-micro) var(--ease-out);
+}
+
+/* — Badge / hint snap-in (overshoot-free) —————————————— */
+
+.pop-in {
+  animation: motion-scale-in 180ms var(--ease-out) both;
+}
+
+/* — Drag ghost (portal) ——————————————————————————————
+   Owns its own transform so it never fights the scroll-driven card
+   animation. The source card stays in place as a dimmed placeholder. */
+
+.drag-ghost {
+  transform: scale(0.98) rotate(-0.5deg);
+  transform-origin: 12px 12px;
+  will-change: left, top;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drag-ghost {
+    transform: none;
+  }
+}
+
+/* — Undo toast entrance —————————————————————————————— */
+
+.undo-toast-enter {
+  animation: motion-slide-up var(--motion-fast) var(--ease-out) both;
+}
+
+/* — Single-card delete explosion —————————————————————— */
+
+.card-explode {
+  animation: motion-explode 300ms cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+/* — Monitor row stagger entrance —————————————————————— */
+
+.monitor-row-enter {
+  animation-name: motion-slide-up;
+  animation-duration: var(--motion-fast);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+  animation-delay: calc(var(--stagger-ms, 0ms));
+}
+
+/* — Apply-success sweep ——————————————————————————————
+   One tag-tinted wash across the monitor slot when a drop lands. */
+
+@keyframes apply-sweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
+.apply-sweep {
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--tag, var(--color-primary)) 22%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: apply-sweep 500ms var(--ease-out) both;
+}
+
+/* — Drop-target state ——————————————————————————————
+   Valid drop lights the card and slot in the dragged preset's tag
+   colour (falls back to primary for untagged presets). */
+
+.monitor-drop-target {
+  border-color: var(--tag, var(--color-primary));
+  box-shadow: inset 0 0 0 1px
+    color-mix(in srgb, var(--tag, var(--color-primary)) 45%, transparent);
+}
+
+/* — Invalid (offline) drop-target shake ——————————————————
+   One-shot horizontal refusal, applied only while hovering an offline
+   monitor with a drag in flight. */
+
+@keyframes drop-shake {
+  0%, 100% { translate: 0 0; }
+  25%      { translate: -2px 0; }
+  75%      { translate: 2px 0; }
+}
+
+.drop-shake {
+  animation: drop-shake 240ms var(--ease-spring) 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apply-sweep {
+    animation: none;
+    opacity: 0;
+  }
+
+  .drop-shake {
+    animation: none;
+  }
+}
+
+/* — Dialog regions staggered reveal —————————————————————— */
+
+[data-slot="dialog-content"] > * {
+  animation: motion-slide-up var(--motion-fast) var(--ease-out) both;
+}
+
+[data-slot="dialog-content"] [data-slot="dialog-title"] {
+  animation-delay: 0ms;
+}
+
+[data-slot="dialog-content"] > div:not([data-slot="dialog-title"]) {
+  animation-delay: 80ms;
+}
+
+[data-slot="dialog-footer"] {
+  animation-delay: 160ms;
+}
+
+/* — Preset library carousel (horizontal scroll with snap) ———————— */
+
+[scroll-snap-type\:x_mandatory] {
+  scroll-snap-type: x mandatory;
+}
+
+[scroll-snap-align\:start] {
+  scroll-snap-align: start;
+}
+
+/* Smooth scroll for programmatic clicks and manual dragging */
+.preset-deck {
+  scroll-behavior: smooth;
+
+  /* Edge blend: cards dissolve into the panel instead of being clipped with
+     a hard cut at the scrollport. The fade spans exactly the 48px content
+     padding (px-12), so a card at rest sits fully inside the opaque zone and
+     only cards travelling out of view are softened. */
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0,
+    #000 48px,
+    #000 calc(100% - 48px),
+    transparent 100%
+  );
+}
+
+/* Carousel reduced motion: no smooth programmatic scrolling either */
+
+@media (prefers-reduced-motion: reduce) {
+  .preset-deck {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
